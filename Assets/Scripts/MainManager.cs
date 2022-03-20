@@ -11,6 +11,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -36,6 +37,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        InitBestScoreText();
     }
 
     private void Update()
@@ -52,12 +55,22 @@ public class MainManager : MonoBehaviour
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                // Quit to main menu.
+                SceneManager.LoadScene("start");
+            }
         }
         else if (m_GameOver)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+            else if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                // Quit to main menu.
+                SceneManager.LoadScene("start");
             }
         }
     }
@@ -72,5 +85,23 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        // Check for new high score.
+        if (m_Points > DataManager.Instance.HighScore)
+        {
+            DataManager.Instance.HighScorePlayerName = DataManager.Instance.CurrentPlayerName;
+            DataManager.Instance.HighScore = m_Points;
+            DataManager.Instance.SaveHighScore();
+
+            InitBestScoreText();
+        }
+    }
+
+    public void InitBestScoreText()
+    {
+        if (BestScoreText != null)
+        {
+            BestScoreText.text = $"Best Score: {DataManager.Instance.HighScorePlayerName}: {DataManager.Instance.HighScore}";
+        }
     }
 }
