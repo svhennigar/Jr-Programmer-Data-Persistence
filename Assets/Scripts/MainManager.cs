@@ -16,6 +16,7 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
+    private string m_PlayerName;
     
     private bool m_GameOver = false;
 
@@ -37,6 +38,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        m_PlayerName = DataManager.Instance.CurrentPlayerName;
 
         InitBestScoreText();
     }
@@ -78,9 +81,9 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"Score: {m_PlayerName}: {m_Points}";
     }
-
+     
     public void GameOver()
     {
         m_GameOver = true;
